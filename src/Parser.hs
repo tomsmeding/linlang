@@ -94,23 +94,6 @@ pExpr = pELam <|> pRecfun <|> pECase <|> pELet <|> pECon <|> pEApps
       e <- pExpr
       return (E0Recfun name funty argname e)
 
-    -- pRecfun = do
-    --   lin <- try $ pSomeLin <* keyword0 "recfun"
-    --   name <- pLoName
-    --   symbol ":"
-    --   symbol "("
-    --   funty <- pTyp
-    --   symbol ")"
-    --   argname <- pLoName
-    --   symbol "="
-    --   e <- pExpr
-    --   argty <- case (lin, funty) of
-    --              (Lin, TLinFun t1 _) -> return t1
-    --              (Nonlin, TFun t1 _) -> return t1
-    --              (Lin, _) -> fail $ "¡recfun must have linear function type, but is " ++ ppTyp 0 funty ""
-    --              (Nonlin, _) -> fail $ "recfun must have nonlinear function type, but is " ++ ppTyp 0 funty ""
-    --   return (EFix (ELam Nonlin name funty (ELam lin argname argty e)))
-
     pECase = do
       keyword "case"
       e1 <- pExpr
