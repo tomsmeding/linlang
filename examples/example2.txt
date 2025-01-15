@@ -1,0 +1,19 @@
+data Bool = True | False
+data Nat = Z | S Nat
+data List = Nil | Cons Nat List
+
+main =
+  let add =
+        recfun add : (Nat -> Nat -> Nat) n = \(m : Nat) ->
+          case n of
+            { Z -> m
+            ; S n' -> S (add n' m)
+            }
+  in let length =
+           recfun length : (List -> Nat) l =
+             case l of
+               { Nil -> Z
+               ; Cons x l -> S (length l)
+               }
+  in let list1 = Cons (S (S Z)) (Cons Z (Cons (S Z) Nil))
+  in length list1

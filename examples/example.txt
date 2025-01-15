@@ -1,0 +1,26 @@
+data Bool = True | False
+data Int = One | Two | Three
+data Thing = A Bool | B Int
+data List = Nil | Cons Int List
+
+main =
+  let add = \(x : Int) -> \(y : Int) ->
+        case x of
+          { One   -> case y of { One -> Two   ; Two -> Three ; Three -> Three }
+          ; Two   -> case y of { One -> Three ; Two -> Three ; Three -> Three }
+          ; Three -> case y of { One -> Three ; Two -> Three ; Three -> Three }
+          }
+  in let head = \(u : List) ->
+           case u of { Nil -> One
+                     ; Cons x l -> x }
+  in \(u : List) ->
+       add (head u)
+         (case u of
+           { Nil -> One
+           ; Cons x v ->
+               case x of
+                 { One -> Three
+                 ; Two -> Two
+                 ; Three -> One
+                 }
+           })

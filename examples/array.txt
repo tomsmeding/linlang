@@ -1,0 +1,43 @@
+data Unit = Unit
+data Nat = Z | S Nat
+data List = Nil | Cons Nat List
+data #Array = #Array List  -- should really be opaque
+data #PairArrayNat = #PairArrayNat #Array Nat
+
+main =
+  let add = recfun add : (Nat -> Nat -> Nat) n = \(m : Nat) ->
+              case n of { Z -> m
+                        ; S n' -> S (add n' m) } in
+
+  let replicateList = recfun replicateList : (Nat -> Nat -> List) len = \(x : Nat) -> case len of { Z -> Nil ; S len' -> Cons x (replicateList len' x) } in
+  let setList = recfun setList : (Nat -> Nat -> List -> List) idx = \(val : Nat) -> \(l : List) ->
+                  case l of { Nil -> Nil
+                            ; Cons x l' -> case idx of { Z -> Cons val l'
+                                                       ; S idx' -> Cons x (setList idx' val l')} } in
+  let indexList = recfun indexList : (Nat -> List -> Nat) idx = \(l : List) ->
+                    case l of { Nil -> Z  -- or error, I guess
+                              ; Cons x l' -> case idx of { Z -> x
+                                                         ; S idx' -> indexList idx' l' } } in
+
+  let new = \(len : Nat) -> #Array (replicateList len Z) in
+  let destroy = \(arr : #Array) -> case arr of { #Array l -> Unit } in
+  let set = \(idx : Nat) -> \(val : Nat) -> \(arr : #Array) ->
+              case arr of { #Array l -> #Array (setList idx val l) } in
+  let get = \(idx : Nat) -> \(arr : #Array) ->
+              case arr of { #Array l -> #PairArrayNat (#Array l) (indexList idx l) } in
+
+  let n0 = Z in
+  let n1 = S n0 in
+  let n2 = S n1 in
+  let n3 = S n2 in
+  let n4 = S n3 in
+  let n5 = S n4 in
+
+  let a = new n3 in
+  let a = set n0 n1 a in
+  let a = set n1 n2 a in
+  let a = set n2 n3 a in
+  let #PairArrayNat a x = get n1 a in
+  let #PairArrayNat a y = get n2 a in
+  let _ = destroy a in
+  add x y

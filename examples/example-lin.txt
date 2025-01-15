@@ -1,0 +1,44 @@
+data Nat = Z | S Nat
+data #List = #Nil | #Cons Nat #List
+data #Nat = #Z | #S #Nat
+data #List2 = #Nil2 | #Cons2 #Nat #List2
+data Unit = Unit
+
+main =
+  let length = recfun length : (#List -> Nat) l =
+        case l of { #Nil -> Z
+                  ; #Cons x l' -> S (length l') }
+  in
+
+  let append = recfun append : (#List -> #List #-> #List) xs =
+         #\(ys : #List) ->
+           case xs of { #Nil -> ys
+                      ; #Cons x xs' -> #Cons x (append xs' ys) }
+  in
+
+  let consumenat = recfun consumenat : (#Nat -> Unit) n =
+        case n of { #Z -> Unit
+                  ; #S m -> consumenat m }
+  in
+  let length2 = recfun length2 : (#List2 -> Nat) l =
+        case l of { #Nil2 -> Z
+                  ; #Cons2 x l' -> let unit = consumenat x in S (length2 l') }
+  in
+  let add =
+        recfun add : (#Nat -> #Nat #-> #Nat) m =
+          #\(n : #Nat) ->
+            case m of { #Z -> n
+                      ; #S m' -> #S (add m' n) }
+  in
+  let add' =
+        recfun add' : (#Nat -> #Nat #-> #Nat) m =
+          case m of { #Z    -> #\(n : #Nat) -> n
+                    ; #S m' -> #\(n : #Nat) -> #S (add' m' n) }
+  in
+  let sum2 =
+        recfun sum2 : (#List2 -> #Nat #-> #Nat) l =
+          #\(m : #Nat) ->
+            case l of { #Nil2 -> m
+                      ; #Cons2 n l' -> sum2 l' (add m n) }
+  in
+  length (#Cons Z (#Cons Z #Nil))
